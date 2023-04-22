@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href='/static/main.css' />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <title>Chinese Calligraphy Seal Detector</title>
+  </head>
+
+  <body>
+    <h1>Chinese Calligraphy Seal Detector</h1>
+    <h3>Results</h3>
+
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="result-image-table">
+            <div id= "result-box" style="  width: fit-content;">
+                    <img id="result-image" src="data:image/jpeg;base64,{{original_image}}" alt="Original Image" width="600">
+              <!-- <img id="result-image" src="https://asiasociety.org/sites/default/files/styles/1200w/public/C/calligraphy.jpg" alt="Original Image" width="600"> -->
+            </div>
+          </div>
+        </div>
+
+        <div class="col">            
+          <table id="result-table" class=" result-table table table-striped">
+            <thead>
+              <tr>
+                <th style="display:none;">X1</th>
+                <th style="display:none;">X2</th>
+                <th style="display:none;">Y1</th>
+                <th style="display:none;">Y2</th>
+                <th>Calligrapher</th>
+                <th>Confidence Interval</th>
+                <th>Locate</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in all_data %}
+                <tr>
+                  <td style="display:none;">{{ data[0]|int }}</td>
+                  <td style="display:none;">{{ data[1]|int }}</td>
+                  <td style="display:none;">{{ data[2]|int }}</td>
+                  <td style="display:none;">{{ data[3]|int }}</td>
+                  <td>{{ data[4]|int }}</td>
+                  <td>{{ data[5]|round(2)}}</td>
+                  <td class="box-color" style="background-color: rgb{{ data[6] }};"></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>    
+  </body>
+  <script>
+    // get references to the image and table elements
+    const img = document.getElementById('result-image');
+    const result_box = document.getElementById('result-box');
+    const table = document.getElementById('result-table');
+  
+    function createBox(x1, y1, x2, y2, color, label, confidence, index) {
+      // create a new div element to represent the box
+      const box = document.createElement('div');
+      box.className = 'temporary-box';
+
+      const imgRect = img.getBoundingClientRect();
+      console.log(imgRect);
+      const imgScale = img.naturalWidth / imgRect.width;
+      console.log(imgScale);
+      const dispX1 = (x1 / imgScale);
+      const dispX2 = (x2 / imgScale);
+
+      const dispY1 = ((y1 - x1) / imgScale) ;
+      const dispY2 = ((y2 - x2) / imgScale) ;
+
+      box.style.left = dispX1 + 'px';
+      box.style.top = dispX2 + 'px';
+      box.style.width = dispY1 + 'px';
+      box.style.height = dispY2 + 'px';
+
+      box.style.color = color
+
+    console.log(box);
+      // add the label and confidence interval to the box
+      const labelEl = document.createElement('div');
+      labelEl.className = 'label';
+      labelEl.textContent = label + ' (' + confidence + ')';
+      // box.appendChild(labelEl);
+
+      // append the box to the image container element
+      result_box.appendChild(box);
+    }
+
+    // add an event listener to each color-cell table cell
+    const colorCells = table.getElementsByClassName('box-color');
+    for (let i = 0; i < colorCells.length; i++) {
+      const cell = colorCells[i];
+      const row = cell.parentElement;
+      const rowData = {
+        x1: row.children[0].textContent,
+        x2: row.children[1].textContent,
+        y1: row.children[2].textContent,
+        y2: row.children[3].textContent,
+        label: row.children[4].textContent,
+        confidence: row.children[5].textContent,
+        color: cell.style.backgroundColor,
+      };
+  
+      cell.addEventListener('mouseenter', function() {
+        console.log("here");
+        console.log(rowData);
+        createBox(rowData.x1, rowData.y1, rowData.x2, rowData.y2, "red", rowData.label, rowData.confidence, i);
+      });
+      cell.addEventListener('mouseleave', function() {
+        console.log("here");
+        console.log(rowData);
+        createBox(rowData.x1, rowData.y1, rowData.x2, rowData.y2, rowData.color, rowData.label, rowData.confidence, i);
+      });
+    }
+  </script>
+</html>

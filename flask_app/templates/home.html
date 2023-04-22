@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href='/static/main.css' />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <title>Chinese Calligraphy Seal Detector</title>
+  </head>
+
+
+
+  <body>
+    <h1>Chinese Calligraphy Seal Detector</h1>
+    <form method="POST" action="{{ url_for('process_image') }}" enctype="multipart/form-data">
+      <input name="photo" id="photo" type="file">
+      <input name="image_text" id="image_text" type="hidden">
+      <div id="results"></div>
+      <input type="submit" value="Submit">
+    </form>  
+  </body>
+
+
+  <script>
+    async function loaded(reader) {
+      console.log(reader.result);
+      // const response = await fetch('https://bbaral-chinese-seal-detector.hf.space/run/predict', {
+      //   method: "POST", body: JSON.stringify({ "data": [reader.result] }),
+      //   headers: { "Content-Type": "application/json" }
+      // });
+      // const json = await response.json();
+      // console.log(json);
+      // const label = json['data'][0]['confidences'][0]['label'];
+      results.innerHTML = `<br/><img src="${reader.result}" width="600"> <p></p>`
+      document.getElementById("image_text").value = reader.result;
+      // console.log(reader);
+    }
+  
+    function read() {
+      const reader = new FileReader();
+      reader.addEventListener('load', () => loaded(reader))
+      reader.readAsDataURL(photo.files[0]);
+    }
+    photo.addEventListener('input', read);
+  </script> 
+</html>

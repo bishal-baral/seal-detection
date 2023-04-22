@@ -1,0 +1,53 @@
+body {
+    background: Linen;
+    margin-top: 50px;
+    margin-left: 100px;
+    text-align: center;
+    }
+   
+  h1 {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 2.5em;
+    color: FireBrick;
+    text-align: center;
+    }
+   
+  p {
+    font-family: Georgia, serif;
+    font-size: 1.2em;
+    color: DarkSlateGray;
+    }
+  
+    .box-color:hover + .box-label {
+      display: block;
+    }
+    
+    .box-label {
+      display: none;
+      position: relative;
+      color: white;
+      font-size: 14px;
+      padding: 2px;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 2px;
+    }
+
+        /* styles for temporary box */
+    .temporary-box {
+      position: absolute;
+      border: 2px solid ;
+      pointer-events: none;
+    }
+
+    /* styles to make the box hover on top of the image */
+    /* #result-image {
+      position: relative;
+    } */
+    #result-box {
+      position: relative;
+    }
+
+
+    #result-image:hover .temporary-box {
+      display: block;
+    }
